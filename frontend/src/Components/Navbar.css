@@ -1,0 +1,213 @@
+.icon-purple {
+    color: #7047ee; /* Purple color */
+    position: relative; /* Ensure it's positioned for z-index */
+    z-index: 1; /* Higher z-index than pulse-wave */
+}
+
+.pulse-wave {
+    position: absolute;
+    height: 60px; /* Size */
+    width: 60px; /* Size */
+    left: 50%; /* Center horizontally */
+    top: 50%; /* Center vertically */
+    transform: translate(-50%, -50%); /* Center using transform */
+    opacity: 0; /* Start with invisible */
+    border: 3px solid #7047ee; /* Ring color */
+    border-radius: 50%; /* Make it circular */
+    animation: pulsate 2s ease-out infinite; /* Continuous pulsate animation */
+}
+
+/* Ensure that this class stops the animation on hover */
+.stop-animate:hover {
+    animation: none; /* Disable animation on hover */
+}
+
+@keyframes pulsate {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5); /* Start at half size */
+        opacity: 0.7; /* Initial opacity */
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.9); /* Scale down */
+        opacity: 0; /* Fade out */
+    }
+}
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
+.p2 {
+  font-family: 'Poppins', Arial, sans-serif;
+  font-weight: 700; /* Bold */
+}
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap');
+
+
+
+
+.style2 {
+  font-family: 'Lato', Arial, sans-serif;
+  font-weight: 400; /* This font typically has a more defined weight */
+}
+
+.style3 {
+  font-family: 'Lato', Arial, sans-serif;
+  font-weight: 200; /* This font typically has a more defined weight */
+}
+
+
+
+
+
+.custom-gray{
+  color: #5C607B;
+}
+
+
+.icon-purple {
+    color: #7047ee; /* Purple color */
+  }
+  
+.bg-purple {
+    background: #7047ee;
+}
+
+.bg-gray {
+  background-color: rgb(243,244,246);
+}
+.hover-text:hover{
+  color:#7047ee;
+}
+.purple-border{
+  border-bottom: 4px solid #7047ee;
+}
+
+.purple-border-hover:hover{
+  border-bottom: 4px solid #7047ee;
+}
+
+.bg-hover:hover {
+  background-color: #7047ee; 
+}
+.border-purple {
+    border: 1px solid #7047ee;
+}
+
+
+  
+
+  .icon-gradient {
+    fill: url(#icon-gradient); /* Apply the gradient defined in SVG */
+    transition: fill 0.3s ease, color 0.3s ease; /* Smooth transition for color */
+  }
+  
+  .icon-gradient:hover {
+    fill: white; /* Change to white when hovered */
+    color: white; /* Ensure color changes to white on hover as well */
+  }
+  
+  
+.fa{
+  
+  color: transparent;
+  background-image: linear-gradient(#7047ee, #e8e1ff,#e8e1ff,#e8e1ff);
+  -webkit-background-clip: text;
+}
+
+
+.tooltip {
+  position: absolute;
+  left:40;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.tooltip-visible {
+  opacity: 1;
+}
+
+
+.bottom-left-content {
+  animation: fadeInBottomLeft 0.8s ease-out forwards; /* Animation for bottom-left */
+}
+
+/* Base class for top-right content with a delay */
+.top-right-content {
+  animation: fadeInTopRight 0.8s ease-out forwards;
+  animation-delay: 100ms; /* Delay for top-right content */
+}
+
+
+.dropdown-content {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+}
+
+.dropdown-content.open {
+  max-height: 1000px; /* Arbitrary large value to allow content to expand */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Add this in your CSS file */
+@keyframes doublePopUp {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.double-pop-up {
+  animation: doublePopUp 0.7s ease-in-out;
+}
+
+/* Add this in your CSS file */
+@keyframes slideUpFadeIn {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-up-fade-in {
+  animation: slideUpFadeIn 0.6s ease-out;
+}
+
+
+/* Only hide scrollbars for specific elements */
+.specific-scrollable-div {
+  overflow-y: auto; /* Allow scrolling */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* For WebKit-based brospecific-scrollable-divwsers (Chrome, Safari) */
+.::-webkit-scrollbar {
+  display: none;
+}

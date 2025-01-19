@@ -1,0 +1,30 @@
+/* Add global dropdown styles */
+.dropdown-container {
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+}
+
+.dropdown-closed {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 0;
+}
+
+.dropdown-open {
+  max-height: 1000px; /* Adjust as per the content */
+  opacity: 1;
+  padding: 10px 0; /* Add padding when open */
+}
+
+
+
+/* Only hide scrollbars for specific elements */
+.specific-scrollable-div {
+  overflow-y: auto; /* Allow scrolling */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* For WebKit-based browsers (Chrome, Safari) */
+.specific-scrollable-div::-webkit-scrollbar {
+  display: none;
+}

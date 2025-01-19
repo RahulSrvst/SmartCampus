@@ -1,0 +1,37 @@
+.dark-color{
+    background:#172b4c;
+}
+
+.table-double-border {
+    border-collapse: collapse; /* Ensures that borders are not doubled */
+    border: double 3px #d3d3d3; /* Sets a double border around the table */
+  }
+  
+  .table-double-border th,
+  .table-double-border td {
+    border: 1px solid #d3d3d3; /* Adds a solid border around each cell */
+    padding: 0.5rem; /* Adjust padding as needed */
+  }
+  
+  .table-double-border tr {
+    border-top: double 3px #d3d3d3; /* Adds a double border to the top of each row */
+    border: double 3px #d3d3d3; /* Adds a double border to the top of each row */
+  }
+  
+  
+
+  .bg-purple{
+    background:#7047ee;
+  }
+
+
+  
+  .bg-green{
+    background:#05825f;
+  }
+
+
+
+  
+  
+  

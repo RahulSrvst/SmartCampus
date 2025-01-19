@@ -1,0 +1,17 @@
+@keyframes moveLeftToRight {
+  0% { transform: translateX(-100%) scaleX(1); }             /* Start off-screen to the left */
+  100% { transform: translateX(100vw) scaleX(1); }           /* Move far outside to the right */
+}
+
+@keyframes moveRightToLeft {
+  0% { transform: translateX(0) scaleX(1); }             /* Start off-screen to the right */
+  100% { transform: translateX(-1000%) scaleX(1); }           /* Move far outside to the left */
+}
+
+.anim-left-to-right {
+  animation: moveLeftToRight 10s linear infinite;
+}
+
+.anim-right-to-left {
+  animation: moveRightToLeft 10s linear infinite;
+}

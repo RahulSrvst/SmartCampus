@@ -1,0 +1,19 @@
+.custom-shadow {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Adjust values as needed */
+}
+
+
+.gradient{
+    background: linear-gradient(to bottom, #042954, #0b4776); /* Left to right */
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap');
+
+
+
+
+.style1 {
+  font-family: 'Lato', Arial, sans-serif;
+  font-weight: 600; /* This font typically has a more defined weight */
+  color: #3744c4;
+}
