@@ -20,6 +20,11 @@ const EmployeeAttendanceSchema = new Schema({
     type: String,
     required: false,
   },
+  collegeId:{
+          type:mongoose.Schema.Types.ObjectId,
+          ref:"user",
+          required:true,
+      },
   status: {
     type: String,
     enum: ["Present", "Absent", "Leave", "Half Day"],

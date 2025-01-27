@@ -7,7 +7,15 @@ const addBatch = async (req, res) => {
     const { batch_name, course, add_batch, start_date, endDate, max_student } =
       req.body;
 
-    // Ensure the course ID is valid
+    const { collegeId } = req.user;
+
+    if (!collegeId) {
+      return res.status(404).json({
+        message: "UnAuthorized College !!!",
+        success: false,
+      });
+    }
+
     if (!mongoose.Types.ObjectId.isValid(course)) {
       return res.status(400).json({
         message: "Invalid Course ID",
@@ -15,7 +23,6 @@ const addBatch = async (req, res) => {
       });
     }
 
-    // Check if the course exists
     const courseData = await CourseModel.findById(course);
 
     if (!courseData) {
@@ -25,13 +32,13 @@ const addBatch = async (req, res) => {
       });
     }
 
-    // Create a new batch object
     const newBatch = new BatchModel({
       batch_name,
-      course: course, // course will be the ObjectId of the found course
+      course: course,
       add_batch,
       start_date,
-      endDate, // Ensure this is consistent with your field names
+      endDate,
+      collegeId,
       max_student,
     });
 
@@ -55,10 +62,20 @@ const addBatch = async (req, res) => {
 
 const getBatch = async (req, res) => {
   try {
-    // Populate the course field with the course document (which includes the course name)
-    const batches = await BatchModel.find().populate("course", "course_name "); // Populate the course field and only fetch the course_name
+    const { collegeId } = req.user;
+    const { course_id } = req.query; 
 
-    // If no batches are found, return a 404 error
+    let query = { collegeId };
+
+
+    if (course_id) {
+      query.course = course_id;
+    }
+
+
+    const batches = await BatchModel.find(query).populate("course", "course_name");
+
+
     if (!batches || batches.length === 0) {
       return res.status(404).json({
         message: "No batches found",
@@ -80,17 +97,28 @@ const getBatch = async (req, res) => {
   }
 };
 
+
 const updateBatch = async (req, res) => {
   try {
     const {
       id,
-      batch_name, course, add_batch, start_date, endDate, max_student
+      batch_name,
+      course,
+      add_batch,
+      start_date,
+      endDate,
+      max_student,
     } = req.body;
 
     const updatedBatch = await BatchModel.findByIdAndUpdate(
       id,
       {
-        batch_name, course, add_batch, start_date, endDate, max_student
+        batch_name,
+        course,
+        add_batch,
+        start_date,
+        endDate,
+        max_student,
       },
       { new: true, runValidators: true }
     );
@@ -119,8 +147,6 @@ const updateBatch = async (req, res) => {
 const deleteBatch = async (req, res) => {
   try {
     const { id } = req.body;
-
-    // Check if the provided ID is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         message: "Invalid Batch ID",
@@ -153,4 +179,4 @@ const deleteBatch = async (req, res) => {
   }
 };
 
-module.exports = { addBatch, getBatch, deleteBatch,updateBatch };
+module.exports = { addBatch, getBatch, deleteBatch, updateBatch };

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import "./Navbar.css";
 import RevenueChart from "./RevenueChart";
 import ProfessorsList from "./ProfessorsList";
@@ -8,6 +9,7 @@ import NewAdmissionReport from "./NewAdmissionReport";
 import FeesCollection from "./FeesCollectionReport";
 import EmployeeDashboard from "./EmployeeDashboard/EmployeeDashboard";
 import StudentDashboard from "./StudentDashboard/StundentDashboard";
+import toast from "react-hot-toast";
 
 
 
@@ -16,6 +18,8 @@ const Main = () => {
   const don = 61;
   const In = 87;
   const Ex = 42;
+
+
   return (
     <div>
     {localStorage.getItem("user_type") === "Admin" &&  <div>
@@ -25,25 +29,6 @@ const Main = () => {
         </div>
 
         <div className="lg:w-[77%] xl:w-[79.5%] md:w-[47.5%] w-[50%] xl:pl-2  lg:ml-0 md:ml-3  relative ">
-        {/* <div className="lg:w-[788px]  xl:w-[1185px] md:w-[360px] w-[37%] xl:pl-2 lg:ml-0 md:ml-3 relative" > */}
-          {/* <div className="fixed lg:w-[74.5%] xl:w-[77.5%] md:w-[58.5%] w-full  lg:ml-0     top-0 z-[999]  ">
-            <div className="md:h-3 h-14 bg-gray z-50 ">
-              <div className="text-3xl flex md:hidden justify-center items-center pt-3  ">
-                <div className="flex items-center justify-center">
-                  <img
-                    src="https://eduerp.bharaterp.org/college-erp/assets/images/logo-letter.png"
-                    alt="Error"
-                    className="h-10 w-14"
-                  />
-                  <div className="text-3xl font-bold ">
-                    <span className="custom-gray">CRM</span>
-                    <span className="icon-purple">i</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <Navbar />
-          </div> */}
 
           <div className=" rounded-b-lg ">
             <div className=" grid  grid-cols-1 md:grid-cols-2  xl:flex md:mt-32  mt-40 w-[101.5%]">

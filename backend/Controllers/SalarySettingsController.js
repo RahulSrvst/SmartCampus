@@ -17,6 +17,15 @@ const add_Salary = async (req, res) => {
       issuedate,
     } = req.body;
 
+    const { collegeId } = req.user;
+
+    if (!collegeId) {
+      return res.status(404).json({
+        message: "UnAuthorized College !!!",
+        success: true,
+      });
+    }
+
     const designation_n = await DesignationModel.findById(designation);
     if (!designation_n) {
       return res.status(409).json({
@@ -58,6 +67,7 @@ const add_Salary = async (req, res) => {
       startdate,
       enddate,
       issuedate,
+      collegeId,
     });
 
     await newSalary.save();
@@ -78,8 +88,16 @@ const add_Salary = async (req, res) => {
 const get_salary = async (req, res) => {
     try{
         const {id , employee_id} = req.query;
+        const { collegeId } = req.user;
+
+    if (!collegeId) {
+      return res.status(404).json({
+        message: "UnAuthorized College !!!",
+        success: true,
+      });
+    }
         if(id){
-            const Salary = await SalarySettingsModel.findById(id).populate("designation","designation_name").populate("employeename","firstname").populate("payhead","payhead").populate("Payment","typename");
+            const Salary = await SalarySettingsModel.findOne({_id,collegeId}).populate("designation","designation_name").populate("employeename","firstname").populate("payhead","payhead").populate("Payment","typename");
 
         if(!Salary){
             return res.status(404).json({
@@ -111,7 +129,7 @@ const get_salary = async (req, res) => {
           success: true,
       });
         }else{
-            const Salary = await SalarySettingsModel.find().populate("designation","designation_name").populate("employeename","lastname firstname").populate("payhead","payheadtype").populate("paymenttype","typename");
+            const Salary = await SalarySettingsModel.find({collegeId}).populate("designation","designation_name").populate("employeename","lastname firstname").populate("payhead","payheadtype").populate("paymenttype","typename");
 
         if(!Salary){
             return res.status(404).json({

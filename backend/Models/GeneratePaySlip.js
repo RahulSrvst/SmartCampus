@@ -48,6 +48,11 @@ const PaySlipSchema = new Schema({
       type: Number,
       required: false,
     },
+    collegeId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"user",
+            required:true,
+        },
   });
   
   const PaySlipModel = mongoose.model("PaySlip", PaySlipSchema);

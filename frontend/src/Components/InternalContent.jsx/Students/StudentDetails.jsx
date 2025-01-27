@@ -1138,7 +1138,7 @@ const StudentProfile = () => {
               <div className=" flex flex-col justify-center w-full mx-auto relative">
                 <img
                   className="w-48 rounded-full h-48 p-2 mx-auto"
-                  src={`${baseURL}${data?.[0]?.student_image}`}
+                  src={`${data?.student_image}`}
                 />
 
                 <div className="absolute top-2 right-2 cursor-pointer hover:text-red-500 ">
@@ -1181,9 +1181,9 @@ const StudentProfile = () => {
               {data?.[0]?.Student_lastname}
             </h3>
             <span className="text-sm text-white bg-[#192b4c] rounded-sm px-3 py-1">
-              {data?.[0]?.course_name}
+              {data?.[0]?.course?.course_name}
               {" , "}
-              {data?.[0]?.batch_name}
+              {data?.[0]?.batch?.batch_name}
             </span>
           </div>
 

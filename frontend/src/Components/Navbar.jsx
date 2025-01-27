@@ -14,9 +14,36 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { RxCross2 } from "react-icons/rx";
 import { MdGroups } from "react-icons/md";
 import { MdShoppingCart } from "react-icons/md";
+import toast from "react-hot-toast";
+import { io } from "socket.io-client";
 
 function Navbar() {
+  const [notifications, setNotifications] = useState([]); // To store notifications
+
+  useEffect(() => {
+    const socket = io("http://localhost:8020"); // Replace with your backend server URL
+  
+    socket.on("connect", () => {
+      console.log("Connected to server:", socket.id);
+    });
+  
+    socket.on("newNotification", (notification) => {
+      console.log("Received new notification:", notification); // Debug log
+      setNotifications((prevNotifications) => [notification, ...prevNotifications]);
+      toast.info(`${notification.title}: ${notification.message}`);
+    });
+  
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+  
+
+  console.log(notifications)
+  
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  console.log("This is Notification :",notifications);
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -122,8 +149,6 @@ function Navbar() {
     setIsNoti((prev) => !prev);
   };
 
-  
-
   return (
     <div className="flex  ">
       <div className="flex w-full justify-between md:pl-3 md:pr-10 pr-5 lg:ml-24 xl:ml-5 md:ml-8 bg-white md:rounded-xl xl:h-[85px] lg:h-[81px] h-[85px] items-center animate__animated animate__bounceInDown">
@@ -163,7 +188,7 @@ function Navbar() {
                   Clear All
                 </span>
               </div>
-              <div className="text-[14px] font-medium text-slate-500">
+              {/* <div className="text-[14px] font-medium text-slate-500">
                 <div className="flex items-center p-3 border-b">
                   <MdGroups className="mt-0.5 h-5 w-6 text-blue-500" />
                   <div className="pl-3">Curabitur id eros quis nunc Suc...</div>
@@ -188,7 +213,15 @@ function Navbar() {
                   <FaUser className="mt-0.5 h-4 mx-1 w-4 icon-purple" />
                   <div className="pl-3">Curabitur id eros quis nunc Suc...</div>
                 </div>
-              </div>
+              </div> */}
+
+              <ul>
+                {notifications.map((notif, index) => (
+                  <li key={index}>
+                    <strong>{notif.title}:</strong> {notif.message}
+                  </li>
+                ))}
+              </ul>
               <div className="flex items-center py-3 border-t justify-center px-4">
                 <span className="text-md font-medium text-slate-500 cursor-pointer">
                   View All

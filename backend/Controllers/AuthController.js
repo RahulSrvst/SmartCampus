@@ -119,30 +119,36 @@ const register = async (req, res) => {
 const getRegisteredCollege = async (req, res) => {
   try {
     const { id } = req.query;
-    console.log("Fetching user with ID:", id);
+    console.log("Fetching data with ID:", id);
 
-    if (!id) {
-      return res.status(400).json({
-        message: "ID parameter is missing",
-        success: false,
+    if (id) {
+      // Fetch specific college data based on the provided ID
+      const userData = await UserModel.findById(id);
+      console.log("Fetched user data:", userData);
+
+      if (!userData) {
+        return res.status(404).json({
+          message: "User not found with this ID",
+          success: false,
+        });
+      }
+
+      return res.status(200).json({
+        message: "College Successfully Fetched !!",
+        data: userData,
+        success: true,
+      });
+    } else {
+      // Fetch all colleges if no ID is provided
+      const allData = await UserModel.find({}).populate("plan");
+      console.log("Fetched all data:", allData);
+
+      return res.status(200).json({
+        message: "All Colleges Successfully Fetched !!",
+        data: allData,
+        success: true,
       });
     }
-
-    const userData = await UserModel.findById(id);
-    console.log("Fetched user data:", userData);
-
-    if (!userData) {
-      return res.status(404).json({
-        message: "User not found with this ID",
-        success: false,
-      });
-    }
-
-    return res.status(200).json({
-      message: "College Successfully Fetched !!",
-      data: userData,
-      success: true,
-    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -157,42 +163,42 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Step 1: Find the user by email
     const user = await UserModel.findOne({ email });
     if (!user) {
-      return res.status(402).json({
-        message: "Incorrect Email & Password !!",
-        success: false,
-      });
+      return res.status(401).json({ message: "Invalid email or password!", success: false });
     }
 
+    // Step 2: Validate the password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(402).json({
-        message: "Incorrect Email & Password !!",
-        success: false,
-      });
+      return res.status(401).json({ message: "Invalid email or password!", success: false });
     }
 
-    const token = jwt.sign({ userId: user._id, collegeId: user.collegeId }, process.env.JWT_TOKEN, {
-      expiresIn: "72h",
-    });
-    res.status(200).json({
-      message: "Login successfully !!",
+    // Step 3: Generate the JWT token with collegeId
+    const token = jwt.sign(
+      { userId: user._id, collegeId: user._id }, // Include `collegeId` in the token payload
+      process.env.JWT_TOKEN,
+      { expiresIn: "72h" } // Token valid for 72 hours
+    );
+
+    // Step 4: Send the token to the client
+    return res.status(200).json({
+      message: "Login successful!",
       success: true,
-      id:user._id,
       token,
-      name:user.name,
-      user_type:"Admin",
-      college:user.college,
+      name: user.name,
+      id:user._id,
+      college: user.college,
       logo:user.logo,
+      user_type: "Admin",
     });
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({
-      message: "Internal Server Error",
-      success: false,
-    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
   }
 };
+
+
 
 module.exports = { register, login,getRegisteredCollege};

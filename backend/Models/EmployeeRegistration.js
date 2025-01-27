@@ -11,7 +11,11 @@ const EmployeeSchema = new Schema ({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Designation",
         required:true,
-    },
+    },collegeId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"user",
+            required:true,
+        },
     employeecode:{
         type:String,
         required:true,

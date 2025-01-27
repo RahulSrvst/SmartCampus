@@ -11,7 +11,11 @@ const PayHeadSchema = new Schema({
     },addition_or_deduction:{
         type:String,
         required:true,
-    }
+    },collegeId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"user",
+            required:true,
+        }
 })
 
 const PayheadModel = mongoose.model("Payhead",PayHeadSchema);

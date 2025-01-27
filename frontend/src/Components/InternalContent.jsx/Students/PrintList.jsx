@@ -366,11 +366,11 @@ const PrintList = () => {
                     value={values.add_batch}
                     name="department"
                   >
-                    <option value="" disabled>
+                    <option value="" >
                       Please Select
                     </option>
                     {batchData?.map((item) => (
-                      <option key={item.id} value={item.id}>
+                      <option key={item._id} value={item._id}>
                         {item.batch_name}
                       </option>
                     ))}
@@ -393,12 +393,12 @@ const PrintList = () => {
                     value={values.user_type}
                     name="user_type"
                   >
-                    <option value="" disabled>
+                    <option value="" >
                       Select Course
                     </option>
                     {/* Exclude "student" from the options */}
                     {course?.map((item) => (
-                      <option key={item.id} value={item.id}>
+                      <option key={item._id} value={item._id}>
                         {item.course_name}
                       </option>
                     ))}

@@ -6,6 +6,11 @@ const DepartmentSchema = new Schema({
     department_name:{
         type:String,
         required:true,
+    },
+    collegeId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"user",
+        required:true,
     }
 })
 

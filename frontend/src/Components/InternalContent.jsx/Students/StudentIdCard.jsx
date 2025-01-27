@@ -9,7 +9,7 @@ import { IoIosArrowUp } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 import toast from "react-hot-toast";
 import { Autocomplete, TextField } from "@mui/material";
-const StudentIdCard = () => {
+const StudentIdCard = ({CollegeData}) => {
   const [content, setContent] = useState("batchwise");
   const [courseData, setCourseData] = useState();
   const [BatchData, setBatchData] = useState();
@@ -25,7 +25,7 @@ const StudentIdCard = () => {
   const [data, setData] = useState([]);
   const [FetchingLoader, setFetchingLoader] = useState(false);
 
-  console.log(selectedId);
+  console.log(employeeNameId);
 
   const Fetchdata = async () => {};
 
@@ -41,12 +41,12 @@ const StudentIdCard = () => {
   const fetchDatas = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(baseURL + API_URLS.teacherAllocation, {
+      const response = await axios.get(baseURL + API_URLS.course, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
-      setCourseData(response.data.course);
+      setCourseData(response.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -59,10 +59,10 @@ const StudentIdCard = () => {
 
     try {
       const response = await axios.get(
-        `${baseURL}get-teacher-allocation-field/`,
+        baseURL + API_URLS.batch,
         {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           params: {
             course_id: id,
@@ -71,7 +71,7 @@ const StudentIdCard = () => {
       );
 
       console.log(response.data);
-      setBatchData(response.data.batch);
+      setBatchData(response.data.data);
     } catch (e) {
       console.error("Error fetching batch data: ", e);
     }
@@ -127,11 +127,11 @@ const StudentIdCard = () => {
           setFetchingLoader(true);
           const response = await axios.get(baseURL + API_URLS.addEmployee, {
             headers: {
-              Authorization: `Token ${token}`,
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
             params: {
-              employee_id: employeeNameId,
+              id: employeeNameId,
             },
           });
           if (response.status === 200) {
@@ -165,7 +165,7 @@ const StudentIdCard = () => {
           Authorization: `Token ${token}`,
         },
       });
-      if (response.status === 200) {
+      if (response.status === 201) {
         setDesignation(response.data.data);
       }
     } catch (e) {
@@ -178,16 +178,17 @@ const StudentIdCard = () => {
     if (designationID) {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(baseURL + API_URLS.printList, {
+        const response = await axios.get(baseURL + API_URLS.addEmployee, {
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           params: {
             designation_id: designationID,
           },
         });
         if (response.status === 200) {
-          setEmployeeName(response.data.data || []);
+          // console.log(response.data.data?.[0])
+          setEmployeeName(response.data.data);
         } else {
           console.log("Error fetching employees");
         }
@@ -278,9 +279,9 @@ const StudentIdCard = () => {
                       <option value="">Please Select</option>
                       {courseData?.map((item) => (
                         <option
-                          key={item.id}
+                          key={item._id}
                           value={item.course_name}
-                          data-id={item.id}
+                          data-id={item._id}
                         >
                           {item.course_name}
                         </option>
@@ -311,9 +312,9 @@ const StudentIdCard = () => {
                       {Array.isArray(BatchData) && BatchData.length > 0 ? (
                         BatchData.map((item) => (
                           <option
-                            key={item.id}
+                            key={item._id}
                             value={item.batch_name}
-                            data-id={item.id}
+                            data-id={item._id}
                           >
                             {item.batch_name}
                           </option>
@@ -423,7 +424,7 @@ const StudentIdCard = () => {
                 <h2 className="text-lg font-normal mb-4 border-b p-5">
                   Student ID Card (Vertical)
                 </h2>
-                <div className="flex justify-center pl-28">
+                <div className="flex justify-between px-28">
                   {data?.map((items, index) => (
                     <div
                       key={index}
@@ -431,12 +432,12 @@ const StudentIdCard = () => {
                     >
                       {/* School Name - Upper Center */}
                       <div className="flex items-center">
-                        <p className="flex items-center text-2xl font-medium mb-2 text-center w-full text-white dark-color rounded-t-xl py-4">
+                        <p className="flex items-center text-xl font-medium mb-2 text-center w-full text-white dark-color rounded-t-xl py-4">
                           <img
-                            src={`${baseURL}${items.college_logo}`}
-                            className="w-14 mx-8 rounded-full"
+                            src={`${CollegeData.logo}`}
+                            className="w-12 h-12 mx-4 rounded-full"
                           />
-                          {items.college_name}
+                          {CollegeData.college}
                         </p>
                       </div>
 
@@ -445,7 +446,7 @@ const StudentIdCard = () => {
                         <div className="flex flex-col border-b  ">
                           <div className="w-36 h-36 bg-gray-300  mx-auto ">
                             <img
-                              src={`${baseURL}${items.student_image}`}
+                              src={`${items.student_image}`}
                               alt="student"
                               className="object-cover w-full h-full"
                             />
@@ -462,8 +463,8 @@ const StudentIdCard = () => {
                           </div>
                           <div>Unique ID : {items.st_id}</div>
                           <div>Roll No. : {items.rollnumber} </div>
-                          <div>Course: {items.course_name} </div>
-                          <div>Batch: {items.batch_name}</div>
+                          <div>Course: {items.course.course_name} </div>
+                          <div>Batch: {items.batch.batch_name}</div>
                           <div>Father Name : {items.father_fullname}</div>
                           <div>Contact No. : {items.father_mobile}</div>
 
@@ -494,9 +495,9 @@ const StudentIdCard = () => {
 
                       {/* Director Signature and Barcode - Bottom Center */}
                       <p className="text-sm px-6 font-medium   w-full text-white dark-color rounded-b-xl py-4">
-                        {items.college_address}, {items.college_city},{" "}
-                        {items.college_state}, {items.college_country}, Pincode
-                        - {items.pincode}, telephone: +91 {items.phone_number}
+                        {CollegeData.address}, {CollegeData.city},{" "}
+                        {CollegeData.state}, {CollegeData.country}, Pincode
+                        - {CollegeData.pincode}, telephone: +91 {CollegeData.mobile}
                       </p>
                     </div>
                   ))}
@@ -520,10 +521,10 @@ const StudentIdCard = () => {
                       {/* School Name - Upper Center */}
                       <p className=" flex items-center  text-2xl font-medium mb-2 text-center w-full text-white dark-color rounded-t-xl py-4">
                         <img
-                          src={`${baseURL}${items.college_logo}`}
+                          src={`${CollegeData?.logo}`}
                           className="w-14  mx-8 rounded-full "
                         />
-                        {items.college_name}
+                        {CollegeData?.college}
                       </p>
 
                       {/* Student Photo and Details */}
@@ -561,8 +562,8 @@ const StudentIdCard = () => {
                           </div>
                           <div>Unique ID :{items.st_id}</div>
                           <div>Roll No. : {items.rollnumber} </div>
-                          <div>Course: {items.course_name} </div>
-                          <div>Batch: {items.batch_name}</div>
+                          <div>Course: {items.course.course_name} </div>
+                          <div>Batch: {items.batch.batch_name}</div>
                           <div>Father Name : {items.father_fullname}</div>
                           <div>Contact No. : {items.father_mobile}</div>
 
@@ -579,11 +580,12 @@ const StudentIdCard = () => {
 
                       {/* Director Signature and Barcode - Bottom Center */}
                       <p className="text-sm px-6 font-medium   w-full text-white dark-color rounded-b-xl py-4">
-                        {items.college_address}, {items.college_city},{" "}
-                        {items.college_state}, {items.college_country}, Pincode
-                        - {items.college_pincode}, telephone: +91{" "}
-                        {items.college_phone}
-                      </p>
+                      {CollegeData?.address},{" "}
+                      {CollegeData?.city},{CollegeData?.state}
+                      , {CollegeData?.country}, Pincode -{" "}
+                      {CollegeData?.pincode}, telephone: +91{" "}
+                      {CollegeData?.mobile}
+                    </p>
                     </div>
                   ))}
 
@@ -772,7 +774,7 @@ const StudentIdCard = () => {
                     >
                       <option value="">Please Select Designation</option>
                       {designation.map((item) => (
-                        <option key={item.id} data-id={item.id}>
+                        <option key={item._id} data-id={item._id}>
                           {item.designation_name}
                         </option>
                       ))}
@@ -798,7 +800,7 @@ const StudentIdCard = () => {
                       )}
                       onChange={(event, value) => {
                         if (value) {
-                          SetEmployeeNameId(value.id);
+                          SetEmployeeNameId(value._id);
                         } else {
                           SetEmployeeNameId(null);
                         }
@@ -849,13 +851,13 @@ const StudentIdCard = () => {
                   {/* {EmployeeData.length > 0 ?( */}
                   <div className="bg-white text-black rounded-xl shadow-lg  items-center w-[400px]">
                     {/* School Name - Upper Center */}
-                    <p className="text-xl flex justify-center items-center gap-3 px-4 font-medium mb-2 text-center w-full text-white dark-color rounded-t-xl py-4">
+                    <p className="text-xl flex  items-center gap-3 px-4 font-medium mb-2 text-center w-full text-white dark-color rounded-t-xl py-4">
                     <img
-                        src={`${baseURL}${EmployeeData?.college_logo} `}
-                        className="w-14 rounded-full"
+                        src={`${CollegeData?.logo} `}
+                        className="w-12 h-12 mr-4 rounded-full"
                         alt="logo"
                       />
-                       <div className="" >{EmployeeData?.college_name}</div>
+                       <div className="" >{CollegeData?.college}</div>
                     </p>
 
                     {/* Student Photo and Details */}
@@ -863,7 +865,7 @@ const StudentIdCard = () => {
                       <div className="flex flex-col border-b  ">
                         <div className="w-36 h-36 bg-gray-300  mx-auto ">
                           <img
-                            src={`${baseURL}${EmployeeData?.image} `}
+                            src={`${EmployeeData?.image} `}
                             className="object-cover w-full h-full"
                             alt="logo"
                           />
@@ -877,8 +879,8 @@ const StudentIdCard = () => {
                         <div className="flex">
                           Employee Name : {EmployeeData?.firstname}{" "}{EmployeeData?.lastname}
                         </div>
-                        <div>Department : {EmployeeData?.department}</div>
-                        <div>Designation: {EmployeeData?.esignation_name}</div>
+                        <div>Department : {EmployeeData?.department?.department_name}</div>
+                        <div>Designation: {EmployeeData?.designation?.designation_name}</div>
                         <div>Employee Code :{EmployeeData?.employeecode}</div>
                         <div>Contact No. : {EmployeeData?.mobile}</div>
 
@@ -909,11 +911,11 @@ const StudentIdCard = () => {
 
                     {/* Director Signature and Barcode - Bottom Center */}
                     <p className="text-sm px-6 font-medium   w-full text-white dark-color rounded-b-xl py-4">
-                      {EmployeeData?.college_address},{" "}
-                      {EmployeeData?.college_city},{EmployeeData?.college_state}
-                      , {EmployeeData?.college_country}, Pincode -{" "}
-                      {EmployeeData?.pincode}, telephone: +91{" "}
-                      {EmployeeData?.phone_number}
+                      {CollegeData?.address},{" "}
+                      {CollegeData?.city},{CollegeData?.state}
+                      , {CollegeData?.country}, Pincode -{" "}
+                      {CollegeData?.pincode}, telephone: +91{" "}
+                      {CollegeData?.mobile}
                     </p>
                   </div>
                   {/* ):(
@@ -935,13 +937,13 @@ const StudentIdCard = () => {
                 <div className="flex justify-center pl-10">
                   <div className="bg-white text-black rounded-xl shadow-lg flex flex-col items-center w-[500px]">
                     {/* School Name - Upper Center */}
-                    <p className="text-xl flex justify-center items-center px-3 gap-3 font-medium mb-2 text-center w-full text-white dark-color rounded-t-xl py-4">
+                    <p className="text-xl flex justify-center -pl-8 items-center px-3 gap-3 font-medium mb-2 text-center w-full text-white dark-color rounded-t-xl py-4">
                       <img
-                        src={`${baseURL}${EmployeeData?.college_logo} `}
-                        className="w-14 rounded-full"
+                        src={`${CollegeData?.logo} `}
+                        className="w-14 h-14 mr-6 rounded-full"
                         alt="logo"
                       />
-                       <div className="text-center" >{EmployeeData?.college_name}</div>
+                       <div className="text-center" >{CollegeData?.college}</div>
                     </p>
 
                     {/* Student Photo and Details */}
@@ -949,7 +951,7 @@ const StudentIdCard = () => {
                       <div className="flex flex-col w-[40%]  ">
                         <div className="w-36 h-36 bg-gray-300 rounded-full mr-4">
                           <img
-                            src={`${baseURL}${EmployeeData?.image}`}
+                            src={`${EmployeeData?.image}`}
                             alt="student"
                             className="object-cover w-full h-full"
                           />
@@ -964,8 +966,8 @@ const StudentIdCard = () => {
                         <div className="flex whitespace-nowrap">
                           Employee Name : {EmployeeData?.firstname}{" "}{EmployeeData?.lastname}
                         </div>
-                        <div>Department : {EmployeeData?.department}</div>
-                        <div>Designation: {EmployeeData?.esignation_name}</div>
+                        <div>Department : {EmployeeData?.department?.department_name}</div>
+                        <div>Designation: {EmployeeData?.designation?.designation_name}</div>
                         <div>Employee Code :{EmployeeData?.employeecode}</div>
                         <div>Contact No : {EmployeeData?.mobile}</div>
                       </div>
@@ -993,11 +995,11 @@ const StudentIdCard = () => {
 
                     {/* Director Signature and Barcode - Bottom Center */}
                     <p className="text-sm px-6 font-medium   w-full text-white dark-color rounded-b-xl py-4">
-                      {EmployeeData?.college_address},{" "}
-                      {EmployeeData?.college_city},{EmployeeData?.college_state}
-                      , {EmployeeData?.college_country}, Pincode -{" "}
-                      {EmployeeData?.pincode}, telephone: +91{" "}
-                      {EmployeeData?.phone_number}
+                      {CollegeData?.address},{" "}
+                      {CollegeData?.city},{CollegeData?.state}
+                      , {CollegeData?.country}, Pincode -{" "}
+                      {CollegeData?.pincode}, telephone: +91{" "}
+                      {CollegeData?.mobile}
                     </p>
                   </div>
 

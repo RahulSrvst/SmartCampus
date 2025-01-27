@@ -15,6 +15,15 @@ const addPaySlip = async (req, res) => {
       } = req.body;
   
       console.log("Requested Body:", req.body);
+
+      const { collegeId } = req.user;
+
+    if (!collegeId) {
+      return res.status(404).json({
+        message: "UnAuthorized College !!!",
+        success: true,
+      });
+    }
   
       if (!Payslipdate || !employee || !basicpay || !netsalary) {
         return res.status(400).json({
@@ -58,7 +67,8 @@ const addPaySlip = async (req, res) => {
         Totaldeduction,
         netsalary,
         payslipYear, 
-        payslipmonth, 
+        payslipmonth,
+        collegeId, 
       });
 
       await payslip.save();
@@ -79,17 +89,27 @@ const addPaySlip = async (req, res) => {
   
   const getPaySlip = async (req, res) => {
     try {
-      const payslips = await PaySlipModel.find()
+      const { collegeId } = req.user;
+
+    if (!collegeId) {
+      return res.status(404).json({
+        message: "UnAuthorized College !!!",
+        success: true,
+      });
+    }
+
+    
+      const payslips = await PaySlipModel.find({collegeId})
   .populate({
     path: "employee",
     populate: [
       {
-        path: "department", // Assuming "department" is the field in the employee model
-        select: "department_name", // Only include the name field of the department
+        path: "department", 
+        select: "department_name", 
       },
       {
-        path: "designation", // Assuming "designation" is the field in the employee model
-        select: "designation_name", // Only include the name field of the designation
+        path: "designation",
+        select: "designation_name",
       },
     ],
   })

@@ -24,7 +24,11 @@ const CourseSchema = new Schema ({
     },syllabus_name:{
         type:String,
         required:true,
-    },
+    },collegeId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"user",
+        required:true,
+    }
 })
 
 const CourseModel = mongoose.model('Course',CourseSchema);

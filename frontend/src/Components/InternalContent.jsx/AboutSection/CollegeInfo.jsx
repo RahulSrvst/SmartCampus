@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { baseURL } from "../../Configs/axios";
+import { API_URLS } from "../../Configs/urls";
 
 const CollegeInfo = () => {
     const [selectedCollege, setSelectedCollege] = useState(null);
-//   const [colleges, setColleges] = useState([]);
+  const [colleges, setColleges] = useState([]);
 
-//   // Fetch colleges data from API
-//   useEffect(() => {
-//     const fetchColleges = async () => {
-//       try {
-//         const response = await axios.get("/api/colleges"); // Replace with your API endpoint
-//         setColleges(response.data);
-//       } catch (error) {
-//         console.error("Error fetching colleges data", error);
-//       }
-//     };
+  // Fetch colleges data from API
+  useEffect(() => {
+    const fetchColleges = async () => {
+      try {
+        const response = await axios.get(baseURL + API_URLS.getCollegeDetails); // Replace with your API endpoint
+        setColleges(response.data.data);
+      } catch (error) {
+        console.error("Error fetching colleges data", error);
+      }
+    };
 
-//     fetchColleges();
-//   }, []);
+    fetchColleges();
+  }, []);
 
 
-const colleges = [
+const colleges1 = [
     {
       "id": "C001",
       "name": "XYZ College",
@@ -58,7 +60,7 @@ const colleges = [
             </tr>
           </thead>
           <tbody>
-            {colleges.map((college, index) => (
+            {colleges?.map((college, index) => (
               <tr key={college.id} className="border-t hover:bg-gray-50">
                 <td className="px-4 py-2">{index + 1}</td>
                 <td className="px-4 py-2">{college.name}</td>
@@ -84,17 +86,19 @@ const colleges = [
           <div className="bg-white  rounded-lg shadow-lg max-w-2xl ">
             <h2 className="text-lg font-normal border-b p-3 mb-4">College Information</h2>
 
-            <img src="" className="w-40 h-40 mx-auto" />
+            <img src={selectedCollege.logo} className="w-40 h-40 mx-auto" />
             <p className="text-sm text-gray-700 px-5 pt-5">
-              <strong>College ID:</strong> {selectedCollege.id}
+              <strong>College ID:</strong> {selectedCollege._id}
             </p>
             <p className="text-sm text-gray-700 px-5">
               <strong>Name:</strong> {selectedCollege.name}
             </p>
             <p className="text-sm text-gray-700 px-5">
-              <strong>Selected Plan:</strong> {selectedCollege.email}
+              <strong>Selected Plan:</strong> {selectedCollege.plan.name}
             </p><p className="text-sm text-gray-700 px-5">
-              <strong>College Name:</strong> {selectedCollege.email}
+              <strong>Selected Plan Price:</strong> ₹{selectedCollege.plan.price}
+            </p><p className="text-sm text-gray-700 px-5">
+              <strong>College Name:</strong> {selectedCollege.college}
             </p><p className="text-sm text-gray-700 px-5">
               <strong>Email:</strong> {selectedCollege.email}
             </p>
@@ -104,10 +108,17 @@ const colleges = [
             <p className="text-sm text-gray-700 px-5">
               <strong>Address:</strong> {selectedCollege.address}
             </p>
-            <div className="mt-4 px-5 pb-4">
+            <div className="mt-4 px-5 pb-4 space-x-5">
+              
               <button
                 onClick={() => setSelectedCollege(null)}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Login College
+              </button>
+              <button
+                onClick={() => setSelectedCollege(null)}
+                className="bg-rose-500 text-white px-4 py-2 rounded hover:bg-rose-600"
               >
                 Close
               </button>

@@ -80,18 +80,18 @@ const StudentAdmission = () => {
     hostel: false,
     user_type: 19,
     course: "",
-    batch: "",
+    batch: Batch_id,
   };
 
   const fetchDatas = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(baseURL + API_URLS.teacherAllocation, {
+      const response = await axios.get(baseURL + API_URLS.course, {
         headers: {
           Authorization: `Token ${token}`,
         },
       });
-      setCourseData(response.data.course);
+      setCourseData(response.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -104,7 +104,7 @@ const StudentAdmission = () => {
 
     try {
       const response = await axios.get(
-        `${baseURL}get-teacher-allocation-field/`,
+        baseURL+API_URLS.batch,
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -116,7 +116,7 @@ const StudentAdmission = () => {
       );
 
       console.log(response.data);
-      setBatchData(response.data.batch);
+      setBatchData(response.data.data);
     } catch (e) {
       console.error("Error fetching batch data: ", e);
     }
@@ -313,9 +313,9 @@ const StudentAdmission = () => {
                   <option value="">Please Select</option>
                   {courseData?.map((item) => (
                     <option
-                      key={item.id}
+                      key={item._id}
                       value={item.course_name}
-                      data-id={item.id}
+                      data-id={item._id}
                     >
                       {item.course_name}
                     </option>
@@ -335,17 +335,17 @@ const StudentAdmission = () => {
                       e.target.options[e.target.selectedIndex].getAttribute(
                         "data-id"
                       );
-                    setFieldValue("batch", selectedBatchId); // Update Formik value
-                    handleBatchId(selectedBatchId); // Update batch ID
+                    setFieldValue("batch",selectedBatchId);
+                    handleBatchId(selectedBatchId); 
                   }}
                 >
                   <option value="">Please Select</option>
                   {Array.isArray(BatchData) && BatchData.length > 0 ? (
                     BatchData.map((item) => (
                       <option
-                        key={item.id}
+                        key={item._id}
                         value={item.batch_name}
-                        data-id={item.id}
+                        data-id={item._id}
                       >
                         {item.batch_name}
                       </option>

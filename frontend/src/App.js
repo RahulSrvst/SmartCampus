@@ -128,8 +128,40 @@ import UpdateProfile from "./Components/InternalContent.jsx/AboutSection/UpdateP
 import CollegeInfo from "./Components/InternalContent.jsx/AboutSection/CollegeInfo";
 import StudentDashboard from "./Components/StudentDashboard/StundentDashboard";
 import ManageFeeStructure from "./Components/InternalContent.jsx/Accounts/AllFeesCollection";
+import { useEffect, useState } from "react";
+import { baseURL } from "./Components/Configs/axios";
+import { API_URLS } from "./Components/Configs/urls";
+import axios from "axios";
 
 function App() {
+  const [CollegeData, setCollegeData] = useState([]);
+
+  const fetchCollegeData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(baseURL + API_URLS.getCollegeDetails, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+        params: {
+          id: localStorage.getItem("id"),
+        },
+      });
+      if (response.status === 200) {
+        setCollegeData(response.data.data || []);
+      } else {
+        console.log("Error fetching College");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("user_type") === "Admin") {
+      fetchCollegeData();
+    }
+  }, [localStorage.getItem("user_type") === "Admin"]);
 
   const location = useLocation();
   
@@ -157,7 +189,7 @@ function App() {
       {!isLoginPage && !isUserSignUp  && !isSignUpPage && !isHome && !isPlan && !isServices && (
         <div className="flex bg-gray md:px-4">
           <div className="md:flex flex-col hidden lg:w-[23%] xl:w-[20%] w-[37%] mt-3 rounded-lg ">
-            <Side />
+            <Side CollegeData={CollegeData} />
           </div>
 
           <div className="lg:w-[77%] xl:w-[79.5%] md:w-[47.5%] w-[50%] xl:pl-2 lg:ml-0  md:ml-3 relative">
@@ -237,7 +269,7 @@ function App() {
         <Route path="/Print List" element={<PrintList/>} />
         <Route path="/Attendance" element={<Attendance/>} />
         <Route path="/Roll Number" element={<RollNumber/>} />
-        <Route path="/Student ID Card" element={<StudentIdCard/>} />
+        <Route path="/Student ID Card" element={<StudentIdCard CollegeData={CollegeData} />} />
         <Route path="/Gate Pass" element={<GatePass/>} />
         <Route path="/Disable Reasons" element={<DisableReasons/>} />
         <Route path="/Disabled Students" element={<DisableStudent/>} />

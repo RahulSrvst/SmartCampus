@@ -3,7 +3,17 @@ const { DepartmentModel } = require("../Models/Department");
 
 const get_department = async(req,res)=>{
     try{
-        const department = await DepartmentModel.find();
+
+      const {collegeId} = req.user;
+
+      if(!collegeId){
+        return res.status(404).json({
+          message:"UnAuthorized College !!!",
+          success:true,
+        })
+      }
+      
+        const department = await DepartmentModel.find({collegeId});
         return res.status(201).json({
             message: "Departent Get successfully!",
             data: department,
@@ -22,8 +32,19 @@ const add_department = async(req,res) =>{
     try{
     const {department_name} = req.body;
 
+    const {collegeId} = req.user;
+
+      if(!collegeId){
+        return res.status(404).json({
+          message:"UnAuthorized College !!!",
+          success:true,
+        })
+      }
+
+
     const newDepartment = new DepartmentModel({
         department_name,
+        collegeId,
     })
 
     await newDepartment.save();

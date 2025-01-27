@@ -30,8 +30,11 @@ function Login() {
   }else if(loginType==="Employee"){
     apiurls = baseURL + API_URLS.employeeLogin;
     console.log("Employee hai")
-  }else{
-    apiurls = baseURL + API_URLS.login;
+  }else if(loginType==="Super Admin"){
+    apiurls = baseURL + API_URLS.SuperAdmin;
+    console.log("Employee hai")
+  }else if(loginType === "Students"){
+    apiurls = baseURL + API_URLS.studentLogin;
   }
 
   const handleLogin = async (e) => {
@@ -42,10 +45,10 @@ function Login() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Token 6d1e22f7f6f570e556706fd9afffded39846b5cf",
+          Authorization: "Bearer 6d1e22f7f6f570e556706fd9afffded39846b5cf",
         },
         body: JSON.stringify({
-          email: erpId,
+          email:erpId,
           password,
         }),
       });
@@ -63,7 +66,10 @@ function Login() {
         }
         if (result.user_type === "student") {
           localStorage.setItem("student_id", result.student_id);
+        }if (result.user_type === "Super Admin") {
+          localStorage.setItem("superAdmin_id", result.student_id);
         }
+        console.log(result)
         toast.success("Login successful!");
         navigate("/dashboard");
       } else {
@@ -108,6 +114,7 @@ function Login() {
           <option value = "College" >College</option>
           <option value="Employee" >Employee</option>
           <option value="Students" >Students</option>
+          <option value="Super Admin" >Super Admin</option>
         </select>
       </div>
         <div className="flex justify-center mb-2">

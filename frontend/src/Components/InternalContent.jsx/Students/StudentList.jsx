@@ -134,12 +134,7 @@ const StudentList = () => {
                         <HiOutlineArrowsUpDown className=" text-sm " />
                       </div>
                     </th>
-                    <th className="px-2 py-2">
-                      <div className="flex justify-between whitespace-nowrap gap-1 text-sm items-center">
-                        Unique Id
-                        <HiOutlineArrowsUpDown className=" text-sm " />
-                      </div>
-                    </th>
+                    
                     
                     <th className="px-2 py-2">
                       <div className="flex justify-between whitespace-nowrap gap-1 text-sm items-center">
@@ -214,17 +209,15 @@ const StudentList = () => {
                       <td className="border-r-2 whitespace-nowrap border-white px-4 py-4 ">
                         {items.rollnumber}
                       </td>
-                      <td className="border-r-2 whitespace-nowrap border-white px-4 py-4 ">
-                        {items.st_id}
-                      </td>
+                      
                       <td className="border-r-2 whitespace-nowrap border-white px-4 py-4 ">
                         {items.student_firstname} {" "}{items.student_middlename} {" "}{items.Student_lastname}
                       </td>
                       <td className="border-r-2 whitespace-nowrap border-white px-4 py-4 ">
-                        {items.course_name}
+                        {items.course.course_name}
                       </td>
                       <td className="border-r-2 whitespace-nowrap border-white px-4 py-4 ">
-                        {items.batch_name}
+                        {items.batch.batch_name}
                       </td>
                       <td className="border-r-2 whitespace-nowrap border-white px-4 py-4 ">
                         {items.father_fullname}

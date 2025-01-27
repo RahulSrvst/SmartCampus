@@ -35,7 +35,7 @@ const RollNumber = () => {
     if (!id) return; // Skip fetch if no valid ID
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(baseURL + API_URLS.teacherAllocation, {
+      const response = await axios.get(baseURL + API_URLS.batch, {
         headers: {
           Authorization: `Token ${token}`,
         },
@@ -44,7 +44,7 @@ const RollNumber = () => {
         },
       });
       if (response.status === 200) {
-        setBatch(response.data.batch);
+        setBatch(response.data.data);
       }
     } catch (e) {
       console.error(e);
@@ -61,17 +61,16 @@ const RollNumber = () => {
     fetchBatch(id);
   }, [id]);
 
-
   const fetchStudentRollNo = async () => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(baseURL + API_URLS.studentAdmission, {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        params:{
-          batch:Batchid,
-        }
+        params: {
+          batch_id: Batchid,
+        },
       });
       if (response.status === 200) {
         setRollno(response.data.data);
@@ -80,10 +79,6 @@ const RollNumber = () => {
       console.error(e);
     }
   };
-
-
-
-
 
   return (
     <div className="ml-[5%] md:ml-[43%] lg:ml-[34%] xl:ml-[23%] xl:mt-[8%] lg:mt-[10%] md:mt-[15%] mt-[35%] pb-20">
@@ -99,7 +94,7 @@ const RollNumber = () => {
             Student Roll Number
           </h2>
 
-          <form className="p-4 grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-gray-700">
+          <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-gray-700">
             <div>
               <label className="block mb-2">Course</label>
               <select
@@ -108,7 +103,7 @@ const RollNumber = () => {
               >
                 <option value="">Please Select</option>
                 {courses?.map((item, index) => (
-                  <option key={index} value={item.id}>
+                  <option key={index} value={item._id}>
                     {item.course_name}
                   </option>
                 ))}
@@ -117,28 +112,31 @@ const RollNumber = () => {
             <div>
               <label className="block mb-2">Batch</label>
               {batch && batch.length > 0 ? (
-                <select 
-                className="w-[100%] mb-4 p-2 border border-gray-300 rounded"
-                onChange={(e) => setBatchID(e.target.value)}
+                <select
+                  className="w-[100%] mb-4 p-2 border border-gray-300 rounded"
+                  onChange={(e) => setBatchID(e.target.value)}
                 >
+                  <option>Please Select</option>
                   {batch.map((b, index) => (
-                    <option key={index} value={b.id} >{b.batch_name}</option>
+                    <option key={index} value={b._id}>
+                      {b.batch_name}
+                    </option>
                   ))}
                 </select>
               ) : (
-                <select className="w-[100%] mb-4 p-2 border border-gray-300 rounded" >
-                <option>No batch data available.</option>
+                <select className="w-[100%] mb-4 p-2 border border-gray-300 rounded">
+                  <option>No batch data available.</option>
                 </select>
               )}
             </div>
 
             <button
-            onClick={fetchStudentRollNo}
+              onClick={fetchStudentRollNo}
               className=" w-[20%] h-9  bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700"
             >
               Search
             </button>
-          </form>
+          </div>
         </div>
         {/* Add Course Form */}
         <div className="bg-white  shadow-md rounded-lg w-[96%] md:w-[97%] mb-4">
@@ -177,17 +175,17 @@ const RollNumber = () => {
                     </th>
                     <th className="px-4 py-2">
                       <div className="flex justify-between">
-                        Unique ID
+                        Course Name
                         <HiOutlineArrowsUpDown />
                       </div>
                     </th>
                     <th className="px-4 py-2">
                       <div className="flex justify-between">
-                        Batch
+                        Batch Name
                         <HiOutlineArrowsUpDown />
                       </div>
                     </th>
-                    
+
                     <th className="px-4 py-2">
                       <div className="flex justify-between">
                         Student Roll No. <HiOutlineArrowsUpDown />
@@ -202,30 +200,31 @@ const RollNumber = () => {
                   </tr>
                 </thead>
                 <tbody>
-                {Rollno.map((items , index)=>(
-                  <tr className="text-sm space-y-2 border-b border-slate-300  odd:bg-gray-100">
-                    <td className="border-r-2 border-white px-4 ">{index + 1}</td>
-                    <td className="border-r-2 border-white px-4 py-4 ">
-                      {items.st_id}
-                    </td>
-                    <td className="border-r-2 border-white px-2 py-4 ">
-                      {items.batch_name}
-                    </td>
-                    <td className="border-r-2 border-white px-4 py-4 ">
-                      {items.rollnumber}
-                    </td>
-                    <td className="border-r-2 border-white px-4 py-4 ">
-                      {items.student_firstname}{" "}{items.Student_lastname}
-                    </td>
-                    
-                  </tr>
-                ))}
+                  {Rollno.map((items, index) => (
+                    <tr className="text-sm space-y-2 border-b border-slate-300  odd:bg-gray-100">
+                      <td className="border-r-2 border-white px-4 ">
+                        {index + 1}
+                      </td>
+                      <td className="border-r-2 border-white px-4 py-4 ">
+                        {items.course.course_name}
+                      </td>
+                      <td className="border-r-2 border-white px-2 py-4 ">
+                        {items.batch.batch_name}
+                      </td>
+                      <td className="border-r-2 border-white px-4 py-4 ">
+                        {items.rollnumber}
+                      </td>
+                      <td className="border-r-2 border-white px-4 py-4 ">
+                        {items.student_firstname} {items.Student_lastname}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
             <div className="flex text-sm justify-between items-center mt-4 py-2">
               <p>Showing 1 to 1 of 1 entries</p>
-              <div className="text-sm" >
+              <div className="text-sm">
                 <button className="text-blue-600 mx-2">Previous</button>
                 <button className="bg-purple text-white px-2 rounded">1</button>
                 <button className="text-blue-600 mx-2">Next</button>

@@ -24,7 +24,7 @@ export const API_URLS = {
     AddDriver:"add-driver-api/",
     AddCategory:"student-category-api/",
     AddDocument:"student-document-api/",
-    studentAdmission:"student-admission-api/",
+    studentAdmission:"auth/student-admission-api",
     payType:"auth/paytype-api",
     payableType:"auth/paymenttype-api",
     salarySetting:"auth/salarysetting-api",
@@ -38,5 +38,8 @@ export const API_URLS = {
     AddDestination :"destination-api/",
     getCollegeDetails :"auth/get-college/",
     feesStructure:"feestructure-api/",
-    employeeLogin:"auth/login-employee"
+    employeeLogin:"auth/login-employee",
+    SuperAdmin:"auth/login-superadmin",
+    Notifiaction:"auth/notification-api",
+    studentLogin:"auth/student-login"
 }

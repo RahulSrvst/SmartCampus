@@ -28,8 +28,13 @@ const BatchSchema = new Schema({
   },
    course: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course',  // Reference to the Course model
+    ref: 'Course',
   },
+  collegeId: {
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'user',
+    required:true,
+  }
 });
 
 

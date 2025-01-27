@@ -26,7 +26,11 @@ const SalarySettings = new Schema({
     },issuedate:{
         type:String,
         required:true,
-    },
+    },collegeId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"user",
+            required:true,
+        }
 })
 
 const SalarySettingsModel = mongoose.model("SalarySetting",SalarySettings);

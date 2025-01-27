@@ -30,8 +30,12 @@ import crmi from "../Assests/custom-17.png";
 import b1 from "../Assests/profile1.png"
 import axios from "axios";
 import { API_URLS } from "./Configs/urls";
+import toast from "react-hot-toast";
+import { io } from "socket.io-client";
 
-const Side = () => {
+const Side = ({CollegeData}) => {
+
+
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -65,34 +69,7 @@ const Side = () => {
     }
   }, [localStorage.getItem("user_type") === "employee"]);
   
-  const [CollegeData, setCollegeData] = useState([]);
-
-  const fetchCollegeData = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(baseURL + API_URLS.getCollegeDetails, {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-        params: {
-          id: localStorage.getItem("id"),
-        },
-      });
-      if (response.status === 200) {
-        setCollegeData(response.data.data || []);
-      } else {
-        console.log("Error fetching College");
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (localStorage.getItem("user_type") === "Admin") {
-      fetchCollegeData();
-    }
-  }, [localStorage.getItem("user_type") === "Admin"]);
+  
 
 
 
@@ -2769,7 +2746,7 @@ const Side = () => {
             </div>
           )}
 
-          {localStorage.getItem("user_type") === "Admin" && (
+          {(localStorage.getItem("user_type") === "Admin") || (localStorage.getItem("user_type") === "Super Admin") && (
             <div
               className="flex justify-between items-center md:mx-7 hover:cursor-pointer"
               onClick={() => toggleDropdown("About")}
@@ -2797,7 +2774,7 @@ const Side = () => {
               </div>
             </div>
           )}
-          {localStorage.getItem("user_type") === "Admin" && (
+          {(localStorage.getItem("user_type") === "Admin") || (localStorage.getItem("user_type") === "Super Admin") && (
             <div
               className={`transition-[max-height] duration-400 ease-in-out overflow-hidden ${
                 isAboutOpen ? "max-h-[40vh]" : "max-h-0"

@@ -3,8 +3,17 @@ const { PaymentModel } = require("../Models/PaymentType");
 const add_payment_type = async (req, res) => {
   try {
     const {typename} = req.body;
+    const { collegeId } = req.user;
+
+    if (!collegeId) {
+      return res.status(404).json({
+        message: "UnAuthorized College !!!",
+        success: true,
+      });
+    }
     const newPaymentType = new PaymentModel({
-      typename
+      typename,
+      collegeId,
     });
 
     await newPaymentType.save();
@@ -25,8 +34,16 @@ const add_payment_type = async (req, res) => {
 const get_PaymentType = async(req,res)=>{
     try{
         const {id} = req.query;
+        const { collegeId } = req.user;
+
+    if (!collegeId) {
+      return res.status(404).json({
+        message: "UnAuthorized College !!!",
+        success: true,
+      });
+    }
         if(id){
-            const PaymentType = await PaymentModel.findById(id);
+            const PaymentType = await PaymentModel.findOne({_id:id,collegeId});
 
         if(!PaymentType){
             return res.status(404).json({
@@ -40,7 +57,7 @@ const get_PaymentType = async(req,res)=>{
             success:false,
         })
         }else{
-            const PaymentType = await PaymentModel.find();
+            const PaymentType = await PaymentModel.find({collegeId});
 
         if(!PaymentType){
             return res.status(404).json({

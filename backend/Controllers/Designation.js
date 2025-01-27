@@ -3,7 +3,17 @@ const { DesignationModel } = require("../Models/Designation");
 
 const get_Designation = async(req,res)=>{
     try{
-        const Designation = await DesignationModel.find();
+
+      const {collegeId} = req.user;
+
+      if(!collegeId){
+        return res.status(404).json({
+          message:"UnAuthorized College !!!",
+          success:true,
+        })
+      }
+
+        const Designation = await DesignationModel.find({collegeId});
         return res.status(201).json({
             message: "Designation Get successfully!",
             data: Designation,
@@ -22,8 +32,18 @@ const add_Designation = async(req,res) =>{
     try{
     const {designation_name} = req.body;
 
+    const {collegeId} = req.user;
+
+      if(!collegeId){
+        return res.status(404).json({
+          message:"UnAuthorized College !!!",
+          success:true,
+        })
+      }
+
     const newDesignation = new DesignationModel({
         designation_name,
+        collegeId,
     })
 
     await newDesignation.save();

@@ -2,19 +2,21 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema;
 
 const SuperAdminSchema = new mongoose.Schema({
-    username:{
+    email:{
         type:String,
         required:true,
     },
     password:{
         type:String,
         required:true,
+    },pic:{
+        type:String,
+        required:false,
     },
     college: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "College",
-    required: true,
   },
 })
 
-module.exports = mongoose.model("Admin", SuperAdminSchema);
+module.exports = mongoose.model("SuperAdmin", SuperAdminSchema);
