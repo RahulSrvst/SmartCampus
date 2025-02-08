@@ -213,7 +213,7 @@ const login_employee = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: employee._id }, process.env.JWT_TOKEN, {
+    const token = jwt.sign({ id: employee._id, collegeId: employee.collegeId }, process.env.JWT_TOKEN, {
       expiresIn: "72h",
     });
 

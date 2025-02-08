@@ -12,8 +12,6 @@ import toast from "react-hot-toast";
 import { Circles, ColorRing, RotatingLines } from "react-loader-spinner";
 
 const AssignSubject = () => {
-  
-
   const [courseData, setCourseData] = useState();
   const [BatchData, setBatchData] = useState();
   const [SubjectData, setSubjectData] = useState();
@@ -24,60 +22,57 @@ const AssignSubject = () => {
   const [Batch_id, setBatch_id] = useState();
   const [subject_id, setSubject_id] = useState();
   const [selectedBatchName, setSelectedBatchName] = useState("");
-  const [fetchingLoader, setFetchingLoader] = useState(false); 
-  const [submittingLoader, setSubmittingLoader] = useState(false); 
+  const [fetchingLoader, setFetchingLoader] = useState(false);
+  const [submittingLoader, setSubmittingLoader] = useState(false);
   const [deletingLoader, setDeletingLoader] = useState(false);
-  const [editId,setEditId] = useState(null);
+  const [editId, setEditId] = useState(null);
 
+  const initialValues = {
+    course: Course_id || null,
+    batch: Batch_id || null,
+    subject: subject_id || null,
+  };
 
-      const initialValues ={
-      course: Course_id || null,
-      batch: Batch_id || null,
-      subject:subject_id || null
-    }
+  const fetchSubject = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      setFetchingLoader(true);
+      const response = await axios.get(baseURL + API_URLS.addSubject, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 200) {
+        console.log("Fetched Subject's:", response.data);
 
+        const subjectData = response.data.data || [];
 
-    const fetchSubject = async () => {
-      const token = localStorage.getItem("token");
-      try {
-        setFetchingLoader(true);
-        const response = await axios.get(baseURL + API_URLS.addSubject, {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.status === 200) {
-          console.log("Fetched Subject's:", response.data);
-  
-          const subjectData = response.data.data || [];
-  
-          if (Array.isArray(subjectData)) {
-            setSubjectData(subjectData);
-          } else {
-            console.error("The response data is not an array", response.data);
-          }
+        if (Array.isArray(subjectData)) {
+          setSubjectData(subjectData);
         } else {
-          console.error("Failed to fetch user types:", response);
+          console.error("The response data is not an array", response.data);
         }
-      } catch (error) {
-        console.log(error);
-      }finally{
-        setFetchingLoader(false);
+      } else {
+        console.error("Failed to fetch user types:", response);
       }
-    };
-
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setFetchingLoader(false);
+    }
+  };
 
   const fetchDatas = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(baseURL + API_URLS.teacherAllocation, {
+      const response = await axios.get(baseURL + API_URLS.course, {
         headers: {
           Authorization: `Token ${token}`,
         },
       });
 
-      setCourseData(response.data.course);
+      setCourseData(response.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -89,20 +84,17 @@ const AssignSubject = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await axios.get(
-        `${baseURL}get-teacher-allocation-field/`,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-          params: {
-            course_id: id,
-          },
-        }
-      );
+      const response = await axios.get(baseURL + API_URLS.batch, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+        params: {
+          course_id: id,
+        },
+      });
 
       console.log(response.data);
-      setBatchData(response.data.batch);
+      setBatchData(response.data.data);
     } catch (e) {
       console.error("Error fetching batch data: ", e);
     }
@@ -124,15 +116,12 @@ const AssignSubject = () => {
     const token = localStorage.getItem("token");
     try {
       setFetchingLoader(true);
-      const response = await axios.get(
-        baseURL + API_URLS.assignSubject,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.get(baseURL + API_URLS.assignSubject, {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       if (response.status === 200) {
         console.log("Fetched Assign Subject Data's:", response.data);
 
@@ -148,80 +137,82 @@ const AssignSubject = () => {
       }
     } catch (error) {
       console.log(error);
-    }finally{
+    } finally {
       setFetchingLoader(false);
     }
   };
 
   const handleEdit = (item) => {
     setEditId(item.id);
-    
 
     setValues({
-        course: item.course,
-        subject: item.subject,
+      course: item.course,
+      subject: item.subject,
     });
-    setSelectedBatchName(item.batch_name)
-};
+    setSelectedBatchName(item.batch_name);
+  };
 
+  const { values, handleChange, handleSubmit, resetForm, setValues } =
+    useFormik({
+      initialValues: initialValues,
 
-  const { values, handleChange, handleSubmit, resetForm ,setValues } = useFormik({
-    initialValues: initialValues,
-    
-    onSubmit: async (values) => {
-      try {
-        setSubmittingLoader(true);
-        const token = localStorage.getItem("token");
-        let response;
-        if(editId){
-          response = await axios.patch(
-            `${baseURL}${API_URLS.assignSubject}`,
-            {assignsubject_id:editId, batch: Batch_id, subject: subject_id, course: Course_id },
-            {
-              headers: {
-                Authorization: `Token ${token}`,
-                "Content-Type": "application/json",
+      onSubmit: async (values) => {
+        try {
+          setSubmittingLoader(true);
+          const token = localStorage.getItem("token");
+          let response;
+          if (editId) {
+            response = await axios.patch(
+              `${baseURL}${API_URLS.assignSubject}`,
+              {
+                assignsubject_id: editId,
+                batch: Batch_id,
+                subject: subject_id,
+                course: Course_id,
               },
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.status === 200) {
+              toast.success("Teacher updated successfully");
+              setEditId(null);
+              resetForm();
+              setValues(initialValues);
+              setSelectedBatchName("Please Select");
+              fetchAssignSubject();
             }
-          );
-          
-          if (response.status === 200) {
-            toast.success("Teacher updated successfully");
-            setEditId(null);
-            resetForm();
-            setValues(initialValues);
-            setSelectedBatchName("Please Select");
-            fetchAssignSubject();
-          }
-        }else{
-          response = await axios.post(
-            `${baseURL}${API_URLS.assignSubject}`,
-            { batch: Batch_id, subject: subject_id, course: Course_id },
-            {
-              headers: {
-                Authorization: `Token ${token}`,
-                "Content-Type": "application/json",
-              },
+          } else {
+            response = await axios.post(
+              `${baseURL}${API_URLS.assignSubject}`,
+              { batch: Batch_id, subject: subject_id, course: Course_id },
+              {
+                headers: {
+                  Authorization: `Token ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (response.status === 200) {
+              toast.success("Teacher added successfully");
+              resetForm();
+              setValues(initialValues);
+              setSelectedBatchName("Please Select");
+              fetchAssignSubject();
             }
-          );
-  
-          if (response.status === 200) {
-            toast.success("Teacher added successfully");
-            resetForm();
-            setValues(initialValues);
-            setSelectedBatchName("Please Select");
-            fetchAssignSubject();
           }
+        } catch (error) {
+          console.error("Error submitting form:", error);
+        } finally {
+          setSubmittingLoader(false);
         }
-        
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }finally{
-        setSubmittingLoader(false);
-      }
-    },
-  });
-
+      },
+    });
 
   function handleCourseId(id) {
     setCourse_id(id);
@@ -231,7 +222,7 @@ const AssignSubject = () => {
     setBatch_id(id);
   }
 
-  function handleSubjectId(id){
+  function handleSubjectId(id) {
     setSubject_id(id);
   }
 
@@ -239,43 +230,39 @@ const AssignSubject = () => {
     setId(id);
   }
 
-
   const handleDelete = async (assignsubject_id) => {
     console.log("Deleting User Type with ID:", assignsubject_id);
     const token = localStorage.getItem("token");
 
     const formData = new FormData();
     formData.append("assignsubject_id", assignsubject_id);
-  
+
     try {
       setDeletingLoader(true);
-      const response = await axios.delete(baseURL+API_URLS.assignSubject, {
+      const response = await axios.delete(baseURL + API_URLS.assignSubject, {
         headers: {
           Authorization: `Token ${token}`,
-          "Content-Type": "multipart/form-data", 
+          "Content-Type": "multipart/form-data",
         },
-        data: formData 
+        data: formData,
       });
-  
+
       if (response.status === 200) {
         toast.success("Assign Subject Deleted successfully");
-        fetchAssignSubject(); 
+        fetchAssignSubject();
       } else {
         console.error("Failed to delete user type:", response.status);
       }
     } catch (error) {
       console.error("Error deleting user type:", error);
-    }finally{
+    } finally {
       setDeletingLoader(false);
     }
   };
 
-
-
-
   return (
     <div className="ml-[5%] md:ml-[43%] lg:ml-[35%] xl:ml-[25%] xl:mt-[8%] lg:mt-[10%] md:mt-[15%] mt-[35%] pb-20">
-    {deletingLoader && (
+      {deletingLoader && (
         <div className="fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-black bg-opacity-50 z-[999]">
           <Circles
             height="80"
@@ -289,20 +276,26 @@ const AssignSubject = () => {
         </div>
       )}
       <div className="flex items-center gap-2 md:gap-5 lg:text-lg text-sm mb-3 md:mb-8 xl:-ml-6 ">
-        <span className="text-[20px]">Academic</span> <span className="text-blue-900 flex items-center text-[14px] mt-0.5" ><FaHome className="text-blue-900 w-4 h-4 mr-2" /> -  Subjects</span><span className="text-[14px]  mt-0.5" > - Assign Subject</span>
+        <span className="text-[20px]">Academic</span>{" "}
+        <span className="text-blue-900 flex items-center text-[14px] mt-0.5">
+          <FaHome className="text-blue-900 w-4 h-4 mr-2" /> - Subjects
+        </span>
+        <span className="text-[14px]  mt-0.5"> - Assign Subject</span>
       </div>
 
       <div className="flex flex-wrap gap-x-4">
         {/* Add Assign Subject Form */}
         <div className="bg-white shadow-md rounded-lg w-[96%] md:w-[96%] lg:w-[95%] xl:w-[40%] mb-4">
-        <div className="flex justify-between text-lg font-bold mb-4 p-4 md:p-6 dark-color text-white rounded-t-lg">
-            <h2>{editId?"Update":"Add"} Assign Subject</h2>
+          <div className="flex justify-between text-lg font-bold mb-4 p-4 md:p-6 dark-color text-white rounded-t-lg">
+            <h2>{editId ? "Update" : "Add"} Assign Subject</h2>
             <BsThreeDotsVertical />
           </div>
 
           <form onSubmit={handleSubmit} className="p-4 text-sm text-gray-700">
-            <label className="block mb-2">Course <span className="text-red-500">*</span></label>
-            
+            <label className="block mb-2">
+              Course <span className="text-red-500">*</span>
+            </label>
+
             <select
               className="w-full mb-4 py-2 pr-2 border border-gray-300 rounded"
               name="course"
@@ -321,16 +314,18 @@ const AssignSubject = () => {
               <option>Please Select</option>
               {courseData?.map((item) => (
                 <option
-                  key={item.id}
+                  key={item._id}
                   value={item.course_name}
-                  data-id={item.id}
+                  data-id={item._id}
                 >
                   {item.course_name}
                 </option>
               ))}
             </select>
 
-            <label className="block mb-2">Batch <span className="text-red-500">*</span></label>
+            <label className="block mb-2">
+              Batch <span className="text-red-500">*</span>
+            </label>
             <select
               className="w-full mb-4 p-2 border border-gray-300 rounded"
               name="batch_name"
@@ -351,9 +346,9 @@ const AssignSubject = () => {
               {Array.isArray(BatchData) && BatchData.length > 0 ? (
                 BatchData.map((item) => (
                   <option
-                    key={item.id}
+                    key={item._id}
                     value={item.batch_name}
-                    data-id={item.id}
+                    data-id={item._id}
                   >
                     {item.batch_name}
                   </option>
@@ -381,17 +376,20 @@ const AssignSubject = () => {
               <option>Please Select</option>
               {SubjectData?.map((subject) => (
                 <option
-                  key={subject.id}
+                  key={subject._id}
                   value={subject.subject_name}
-                  data-id={subject.id}
+                  data-id={subject._id}
                 >
                   {subject.subject_name}
                 </option>
               ))}
             </select>
 
-            <button type="submit" className="w-full lg:w-[25%] bg-green-700 text-white py-2 rounded-lg hover:bg-green-800">
-              {editId?"Update":"Save"}
+            <button
+              type="submit"
+              className="w-full lg:w-[25%] bg-green-700 text-white py-2 rounded-lg hover:bg-green-800"
+            >
+              {editId ? "Update" : "Save"}
             </button>
           </form>
           {submittingLoader && (
@@ -425,21 +423,42 @@ const AssignSubject = () => {
             </div>
             <div className="flex items-center">
               <label className="mr-2">Search:</label>
-              <input type="text" className="p-1 border border-gray-300 rounded" placeholder="" />
+              <input
+                type="text"
+                className="p-1 border border-gray-300 rounded"
+                placeholder=""
+              />
             </div>
           </div>
 
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-[16px] border-b border-black" >
-                <th className="px-4 py-2"><div className="flex justify-between gap-2 text-sm items-center" >Course <HiOutlineArrowsUpDown className="text-sm" /></div></th>
-                <th className="px-4 py-2"><div className="flex justify-between gap-2 text-sm items-center" >Batch <HiOutlineArrowsUpDown className="text-sm " /></div></th>
-                <th className="px-4 py-2"><div className="flex justify-between gap-2 text-sm items-center" >Subject<HiOutlineArrowsUpDown className="text-sm" /></div></th>
-                <th className="px-4 py-2"><div className="flex justify-between gap-2 text-sm items-center" >Option <HiOutlineArrowsUpDown className="text-sm" /></div></th>
+              <tr className="text-[16px] border-b border-black">
+                <th className="px-4 py-2">
+                  <div className="flex justify-between gap-2 text-sm items-center">
+                    Course <HiOutlineArrowsUpDown className="text-sm" />
+                  </div>
+                </th>
+                <th className="px-4 py-2">
+                  <div className="flex justify-between gap-2 text-sm items-center">
+                    Batch <HiOutlineArrowsUpDown className="text-sm " />
+                  </div>
+                </th>
+                <th className="px-4 py-2">
+                  <div className="flex justify-between gap-2 text-sm items-center">
+                    Subject
+                    <HiOutlineArrowsUpDown className="text-sm" />
+                  </div>
+                </th>
+                <th className="px-4 py-2">
+                  <div className="flex justify-between gap-2 text-sm items-center">
+                    Option <HiOutlineArrowsUpDown className="text-sm" />
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
-            {fetchingLoader && (
+              {fetchingLoader && (
                 <tr>
                   <td colSpan="4" className="text-center py-4">
                     <div className="flex justify-center items-center">
@@ -462,33 +481,59 @@ const AssignSubject = () => {
                   </td>
                 </tr>
               )}
-            {data.length > 0 ?(data?.map((items)=>(
-              <tr className="text-[16px] space-y-2 border-b border-slate-300  bg-gray-100" >
-                <td className="border-r-2 border-white px-4 ">{items.course}</td>
-                <td className="border-r-2 border-white px-4 py-4 ">{items.batch}</td>
-                <td className="border-r-2 border-white px-4 py-4 ">{items.subject}</td>
-                <td className="border-r-2 border-white px-4 py-4  text-center">
-                  <button className="text-blue-900 mx-2" aria-label="Edit course"><TiPencil onClick={()=>handleEdit(items)} className="h-[16px] w-[16px] pt-0.5" /></button>
-                  <button className="text-blue-900" aria-label="Delete course"><FaTrashAlt onClick={()=>handleDelete(items.id)} className="h-3 w-3" /></button>
-                </td>
-              </tr>
-            ))
-            ) : (
+              {data.length > 0 ? (
+                data?.map((items) => (
+                  <tr key={items._id} className="text-[16px] space-y-2 border-b border-slate-300  bg-gray-100">
+                    <td className="border-r-2 border-white px-4 ">
+                      {items?.course?.course_name}
+                    </td>
+                    <td className="border-r-2 border-white px-4 py-4 ">
+                      {items?.batch?.batch_name}
+                    </td>
+                    <td className="border-r-2 border-white px-4 py-4 ">
+                      {items?.subject?.subject_name}
+                    </td>
+                    <td className="border-r-2 border-white px-4 py-4  text-center">
+                      <button
+                        className="text-blue-900 mx-2"
+                        aria-label="Edit course"
+                      >
+                        <TiPencil
+                          onClick={() => handleEdit(items)}
+                          className="h-[16px] w-[16px] pt-0.5"
+                        />
+                      </button>
+                      <button
+                        className="text-blue-900"
+                        aria-label="Delete course"
+                      >
+                        <FaTrashAlt
+                          onClick={() => handleDelete(items.id)}
+                          className="h-3 w-3"
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
                   <td colSpan="5" className="text-center py-4 ">
                     No Assign Subject Available
                   </td>
                 </tr>
               )}
-
             </tbody>
           </table>
 
           <div className="flex justify-between items-center mt-4">
-            <p className="text-[14px] text-slate-500 ">Showing 1 to 1 of 1 entries</p>
+            <p className="text-[14px] text-slate-500 ">
+              Showing 1 to 1 of 1 entries
+            </p>
             <div className="flex">
               <button className="text-slate-500 mx-2">Previous</button>
-              <button className="bg-purple text-white px-3 py-2 rounded-sm">1</button>
+              <button className="bg-purple text-white px-3 py-2 rounded-sm">
+                1
+              </button>
               <button className="text-slate-500 mx-2">Next</button>
             </div>
           </div>

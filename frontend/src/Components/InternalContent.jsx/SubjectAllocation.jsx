@@ -74,7 +74,7 @@ const SubjectAllocation = () => {
   const fetchDatas = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(baseURL + API_URLS.getSubjectAllocation, {
+      const response = await axios.get(baseURL + API_URLS.course, {
         headers: {
           Authorization: `Token ${token}`,
         },
@@ -82,10 +82,53 @@ const SubjectAllocation = () => {
 
       console.log(response.data)
 
-      setCourseData(response.data.course);
+      setCourseData(response.data.data);
       setSubjectData(response.data.subject);
       setEmployeeData(response.data.employee_name);
       setDepartmentData(response.data.department);
+    } catch (e) {
+      console.log(e);
+    }
+  };const fetchSubjectSDatas = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(baseURL + API_URLS.addSubject, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      console.log(response.data)
+
+      setSubjectData(response.data.data);
+    } catch (e) {
+      console.log(e);
+    }
+  }; const fetchEmployeeDatas = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(baseURL + API_URLS.addEmployee, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      console.log(response.data)
+      setEmployeeData(response.data.data);
+    } catch (e) {
+      console.log(e);
+    }
+  }; const fetchDesignationDatas = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(baseURL + API_URLS.designation, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      console.log(response.data)
+      setDepartmentData(response.data.data);
     } catch (e) {
       console.log(e);
     }
@@ -98,7 +141,7 @@ const SubjectAllocation = () => {
 
     try {
       const response = await axios.get(
-        baseURL + API_URLS.getSubjectAllocation,
+        baseURL + API_URLS.batch,
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -110,7 +153,7 @@ const SubjectAllocation = () => {
       );
 
       console.log(response.data);
-      setBatchData(response.data.batch);
+      setBatchData(response.data.data);
     } catch (e) {
       console.error("Error fetching batch data: ", e);
     }
@@ -118,6 +161,9 @@ const SubjectAllocation = () => {
   useEffect(()=>{
     fetchDatas();
     fetchSubjectAllocation();
+    fetchSubjectSDatas();
+    fetchDesignationDatas();
+    fetchEmployeeDatas();
   },[])
 
   useEffect(() => {
@@ -300,11 +346,11 @@ const SubjectAllocation = () => {
               <option>Please Select</option>
               {DepartmentData?.map((subject) => (
                 <option
-                  key={subject.id}
-                  value={subject.name}
-                  data-id={subject.id}
+                  key={subject._id}
+                  value={subject.designation_name}
+                  data-id={subject._id}
                 >
-                  {subject.name}
+                  {subject.designation_name}
                 </option>
               ))}
             </select>
@@ -327,9 +373,9 @@ const SubjectAllocation = () => {
               <option>Please Select</option>
               {EmployeeData?.map((subject) => (
                 <option
-                  key={subject.id}
+                  key={subject._id}
                   value={subject.firstname}
-                  data-id={subject.id}
+                  data-id={subject._id}
                 >
                   {subject.firstname}{" "}{subject.lastname}
                 </option>
@@ -355,9 +401,9 @@ const SubjectAllocation = () => {
               <option>Please Select</option>
               {courseData?.map((item) => (
                 <option
-                  key={item.id}
+                  key={item._id}
                   value={item.course_name}
-                  data-id={item.id}
+                  data-id={item._id}
                 >
                   {item.course_name}
                 </option>
@@ -385,9 +431,9 @@ const SubjectAllocation = () => {
               {Array.isArray(BatchData) && BatchData.length > 0 ? (
                 BatchData.map((item) => (
                   <option
-                    key={item.id}
+                    key={item._id}
                     value={item.batch_name}
-                    data-id={item.id}
+                    data-id={item._id}
                   >
                     {item.batch_name}
                   </option>
@@ -415,9 +461,9 @@ const SubjectAllocation = () => {
               <option>Please Select</option>
               {SubjectData?.map((subject) => (
                 <option
-                  key={subject.id}
+                  key={subject._id}
                   value={subject.subject_name}
-                  data-id={subject.id}
+                  data-id={subject._id}
                 >
                   {subject.subject_name}
                 </option>
@@ -500,12 +546,12 @@ const SubjectAllocation = () => {
                 </tr>
               )}
             {data.length > 0 ? (data?.map((items)=>(
-              <tr className="text-[16px] space-y-2 border-b border-slate-300  bg-gray-100" >
-                <td className="border-r-2 border-white px-4 ">{items.department}</td>
-                <td className="border-r-2 border-white px-4 py-4 ">{items.class_teacher_name}</td>
-                <td className="border-r-2 border-white px-4 py-4 ">{items.course}</td>
-                <td className="border-r-2 border-white px-4 py-4 ">{items.batch}</td>
-                <td className="border-r-2 border-white px-4 py-4 ">{items.subject_name}</td>
+              <tr key={items._id} className="text-[16px] space-y-2 border-b border-slate-300  bg-gray-100" >
+                <td className="border-r-2 border-white px-4 ">{items?.designation?.designation_name}</td>
+                <td className="border-r-2 border-white px-4 py-4 ">{items?.teacher?.teacher}</td>
+                <td className="border-r-2 border-white px-4 py-4 ">{items?.course?.course_name}</td>
+                <td className="border-r-2 border-white px-4 py-4 ">{items?.batch?.batch_name}</td>
+                <td className="border-r-2 border-white px-4 py-4 ">{items?.subject?.subject_name}</td>
                 <td className="border-r-2 border-white px-4 py-4  text-center">
                   <button className="text-blue-900 mx-2" aria-label="Edit course"><TiPencil onClick={()=>handleEdit(items)} className="h-[16px] w-[16px] pt-0.5" /></button>
                   <button className="text-blue-900" aria-label="Delete course"><FaTrashAlt onClick={()=>handleDelete(items.id)} className="h-3 w-3" /></button>

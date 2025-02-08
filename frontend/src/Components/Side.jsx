@@ -30,8 +30,7 @@ import crmi from "../Assests/custom-17.png";
 import b1 from "../Assests/profile1.png"
 import axios from "axios";
 import { API_URLS } from "./Configs/urls";
-import toast from "react-hot-toast";
-import { io } from "socket.io-client";
+
 
 const Side = ({CollegeData}) => {
 
@@ -645,7 +644,7 @@ const Side = ({CollegeData}) => {
               )}
               {localStorage.getItem("user_type") === "employee" && (
                 <img
-                  src={`${selectedEmployee?.image}`}
+                  src={`${selectedEmployee?.[0]?.image}`}
                   alt="Profile Avatar"
                   className="w-14 h-14"
                 />
@@ -665,7 +664,7 @@ const Side = ({CollegeData}) => {
                     </span>}
                   {localStorage.getItem("user_type") === "employee" && (
                     <span>
-                      {selectedEmployee.firstname} {selectedEmployee.lastname}
+                      {selectedEmployee?.[0]?.firstname} {selectedEmployee?.[0]?.lastname}
                     </span>
                   )}
 

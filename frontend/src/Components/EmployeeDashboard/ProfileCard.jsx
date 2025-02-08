@@ -19,20 +19,20 @@ const ProfileCard = ({ selectedEmployee }) => {
           <div className="flex items-center space-x-10" >
             <div>
               <img
-                src={`${baseURL}${selectedEmployee?.image}`}
-                alt={`${selectedEmployee.firstname}'s Profile`}
+                src={`${selectedEmployee?.[0]?.image}`}
+                alt={`${selectedEmployee?.[0]?.firstname}'s Profile`}
                 className="w-24 h-24 rounded-sm border-2 border-white mx-auto mb-4"
               />
             </div>
-            <div className=" -mt-7">
+            <div className="-ml-2 -mt-7">
               <span className="text-xs text-blue-800 font-medium bg-blue-100 rounded-sm px-5">
-                # {selectedEmployee.employeecode}
+                # {selectedEmployee?.[0]?.employeecode}
               </span>
-              <h3 className="text-xl font-bold text-center text-white">
-                {selectedEmployee.firstname} {selectedEmployee.lastname}
+              <h3 className="text-lg font-bold whitespace-nowrap text-white">
+                {selectedEmployee?.[0]?.firstname} {selectedEmployee?.[0]?.lastname}
               </h3>
               <p className="text-gray-200   ">
-                Role: {selectedEmployee?.esignation_name}
+                Role: {selectedEmployee?.[0]?.designation?.designation_name}
               </p>
             </div>
           </div>

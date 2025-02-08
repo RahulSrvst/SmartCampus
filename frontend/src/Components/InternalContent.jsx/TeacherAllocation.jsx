@@ -37,18 +37,35 @@ const TeacherAllocation = () => {
   const fetchDatas = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(baseURL + API_URLS.teacherAllocation, {
+      const response = await axios.get(baseURL + API_URLS.course, {
         headers: {
           Authorization: `Token ${token}`,
         },
       });
 
       setTeacherAllocationData(response.data.class_teacher);
-      setCourseData(response.data.course);
+      setCourseData(response.data.data);
     } catch (e) {
       console.log(e);
     }
   };
+  
+  const fetchEmployeeDatas = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(baseURL + API_URLS.addEmployee, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      setTeacherAllocationData(response.data.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  console.log("Teacher Data is :",data)
 
   const fetchBatchDatas = async (id) => {
     console.log(id);
@@ -57,7 +74,7 @@ const TeacherAllocation = () => {
 
     try {
       const response = await axios.get(
-        `${baseURL}get-teacher-allocation-field/`,
+        baseURL+API_URLS.batch,
         {
           headers: {
             Authorization: `Token ${token}`,
@@ -69,7 +86,7 @@ const TeacherAllocation = () => {
       );
 
       console.log(response.data);
-      setBatchData(response.data.batch);
+      setBatchData(response.data.data);
     } catch (e) {
       console.error("Error fetching batch data: ", e);
     }
@@ -91,13 +108,8 @@ const TeacherAllocation = () => {
       if (response.status === 200) {
         console.log("Fetched Teacher Data's:", response.data);
 
-        const userTypesData = response.data.data || [];
-
-        if (Array.isArray(userTypesData)) {
+        const userTypesData = response.data.data;
           setData(userTypesData);
-        } else {
-          console.error("The response data is not an array", response.data);
-        }
       } else {
         console.error("Failed to fetch user types:", response);
       }
@@ -110,6 +122,7 @@ const TeacherAllocation = () => {
 
   useEffect(() => {
     fetchDatas();
+    fetchEmployeeDatas();
     fetchTeacherAllocation();
   }, []);
 
@@ -287,9 +300,9 @@ const TeacherAllocation = () => {
               <option>Please Select</option>
               {courseData?.map((item) => (
                 <option
-                  key={item.id}
+                  key={item._id}
                   value={item.course_name}
-                  data-id={item.id}
+                  data-id={item._id}
                 >
                   {item.course_name}
                 </option>
@@ -315,9 +328,9 @@ const TeacherAllocation = () => {
               {Array.isArray(BatchData) && BatchData.length > 0 ? (
                 BatchData.map((item) => (
                   <option
-                    key={item.id}
+                    key={item._id}
                     value={item.batch_name}
-                    data-id={item.id}
+                    data-id={item._id}
                   >
                     {item.batch_name}
                   </option>
@@ -344,11 +357,11 @@ const TeacherAllocation = () => {
               <option>Please Select</option>
               {teacherAllocation?.map((teacher) => (
                 <option
-                  key={teacher.id}
+                  key={teacher._id}
                   value={teacher.name}
-                  data-id={teacher.id}
+                  data-id={teacher._id}
                 >
-                  {teacher.firstname}
+                  {teacher.firstname}{" "}{teacher.lastname}
                 </option>
               ))}
             </select>
@@ -453,13 +466,13 @@ const TeacherAllocation = () => {
                 data?.map((items, index) => (
                 <tr className="text-sm space-y-2 border-b border-gray-300 last:border-black odd:bg-gray-100">
                   <td className="border-r-2 border-white px-4 ">
-                    {items.cource_name}
+                    {items?.course?.course_name}
                   </td>
                   <td className="border-r-2 border-white px-4 py-4 ">
-                    {items.batch_name}
+                    {items?.batch?.batch_name}
                   </td>
                   <td className="border-r-2 border-white px-4 py-4 ">
-                    {items.class_teacher_name}
+                    {items?.teacher?.firstname}{" "}{items?.teacher?.lastname};
                   </td>
                   <td className="border-r-2 border-white px-4 py-4  text-center">
                     <button
