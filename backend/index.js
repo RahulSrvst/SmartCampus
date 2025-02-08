@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to Smart Campus!");
 });
 
-const AuthRouter = require("../Routes/AuthRouter.js");
+const AuthRouter = require("./Routes/AuthRouter.js");
 app.use("/auth", AuthRouter);
 
 module.exports = app;
